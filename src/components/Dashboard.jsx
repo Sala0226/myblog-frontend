@@ -1,17 +1,19 @@
 import { useState, useEffect, useMemo } from 'react';
+import { FiSearch, FiX } from 'react-icons/fi';
 import PostCard from './PostCard';
 import CreatePostModal from './CreatePostModal';
 import * as postService from '../services/post.service';
 import '../styles/dashboard.css';
 import '../styles/post.css';
-import { FiSearch, FiX } from 'react-icons/fi';
 
 export default function Dashboard({ user, onLogout }) {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts]         = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [search, setSearch] = useState('');
+  const [loading, setLoading]     = useState(true);
+  const [menuOpen, setMenuOpen]   = useState(false);
+  const [search, setSearch]       = useState('');
+  const [page, setPage]           = useState(1);
+  const [pagination, setPagination] = useState(null);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -19,18 +21,25 @@ export default function Dashboard({ user, onLogout }) {
     onLogout();
   };
 
-  useEffect(() => {
-    postService.getPosts()
-      .then(res => setPosts(res.data))
+  const fetchPosts = (p = 1) => {
+    setLoading(true);
+    postService.getPosts(p)
+      .then(res => {
+        setPosts(res.data.posts);
+        setPagination(res.data.pagination);
+        setPage(p);
+      })
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
-  }, []);
-
-  const handlePostCreated = (newPost) => {
-    setPosts(prev => [newPost, ...prev]);
   };
 
-  // Filtre côté front en temps réel
+  useEffect(() => { fetchPosts(1); }, []);
+
+  const handlePostCreated = (newPost) => {
+    fetchPosts(1); // Recharge page 1 après création
+  };
+
+  // Filtre local sur les posts de la page courante
   const filteredPosts = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return posts;
@@ -42,6 +51,11 @@ export default function Dashboard({ user, onLogout }) {
   }, [search, posts]);
 
   const initial = user?.name?.charAt(0).toUpperCase() || '?';
+
+  // Génère les numéros de pages
+  const pageNumbers = pagination
+    ? Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
+    : [];
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8f8f8' }}>
@@ -76,7 +90,7 @@ export default function Dashboard({ user, onLogout }) {
         </div>
       </header>
 
-      {/* Menu burger mobile */}
+      {/* Burger menu mobile */}
       {menuOpen && (
         <div className="burger-menu">
           <div className="burger-user-info">
@@ -93,7 +107,7 @@ export default function Dashboard({ user, onLogout }) {
         </div>
       )}
 
-      {/* Barre de recherche */}
+      {/* Recherche */}
       <div className="search-bar">
         <div className="search-input-wrap">
           <FiSearch className="search-icon" />
@@ -121,10 +135,9 @@ export default function Dashboard({ user, onLogout }) {
         <div className="empty-state">
           {search ? (
             <>
-              <p style={{ fontSize: '24px' }}></p>
+              <p style={{ fontSize: '24px' }}>🔍</p>
               <p>Aucun post trouvé pour <strong>"{search}"</strong></p>
-              <button
-                onClick={() => setSearch('')}
+              <button onClick={() => setSearch('')}
                 style={{ marginTop: '12px', padding: '8px 16px', background: '#534AB7', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '13px' }}>
                 Effacer la recherche
               </button>
@@ -141,6 +154,41 @@ export default function Dashboard({ user, onLogout }) {
           {filteredPosts.map(post => (
             <PostCard key={post._id} post={post} currentUser={user} />
           ))}
+        </div>
+      )}
+
+      {/* Pagination — cachée si recherche active */}
+      {!search && pagination && pagination.totalPages > 1 && (
+        <div className="pagination">
+          {/* Précédent */}
+          <button
+            className="page-btn arrow"
+            disabled={!pagination.hasPrev}
+            onClick={() => fetchPosts(page - 1)}>
+            ‹
+          </button>
+
+          {/* Numéros */}
+          {pageNumbers.map(n => (
+            <button
+              key={n}
+              className={`page-btn ${n === page ? 'active' : ''}`}
+              onClick={() => fetchPosts(n)}>
+              {n}
+            </button>
+          ))}
+
+          {/* Suivant */}
+          <button
+            className="page-btn arrow"
+            disabled={!pagination.hasNext}
+            onClick={() => fetchPosts(page + 1)}>
+            ›
+          </button>
+
+          <span className="page-info">
+            Page {page} / {pagination.totalPages}
+          </span>
         </div>
       )}
 
