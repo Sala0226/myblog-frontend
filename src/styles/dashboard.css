@@ -1,0 +1,86 @@
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 64px;
+  background: white;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.header-logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #534AB7;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.user-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.user-email {
+  margin: 0;
+  font-size: 12px;
+  color: #888;
+}
+
+.btn-logout {
+  padding: 8px 16px;
+  background: white;
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-logout:hover {
+  background: #fdecea;
+}
+
+/* Contenu */
+.dashboard-content {
+  padding: 2rem;
+}
+
+.dashboard-content h2 {
+  font-size: 18px;
+  color: #1a1a1a;
+}
+
+.dashboard-content p {
+  color: #888;
+  font-size: 14px;
+  margin-top: 6px;
+}
