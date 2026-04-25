@@ -1,15 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import PostCard from './PostCard';
 import CreatePostModal from './CreatePostModal';
 import * as postService from '../services/post.service';
 import '../styles/dashboard.css';
 import '../styles/post.css';
+import { FiSearch, FiX } from 'react-icons/fi';
 
 export default function Dashboard({ user, onLogout }) {
-  const [posts, setPosts]         = useState([]);
+  const [posts, setPosts] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading]     = useState(true);
-  const [menuOpen, setMenuOpen]   = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [search, setSearch] = useState('');
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -28,16 +30,26 @@ export default function Dashboard({ user, onLogout }) {
     setPosts(prev => [newPost, ...prev]);
   };
 
+  // Filtre côté front en temps réel
+  const filteredPosts = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return posts;
+    return posts.filter(p =>
+      p.title?.toLowerCase().includes(q) ||
+      p.content?.toLowerCase().includes(q) ||
+      p.author?.name?.toLowerCase().includes(q)
+    );
+  }, [search, posts]);
+
   const initial = user?.name?.charAt(0).toUpperCase() || '?';
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8f8f8' }}>
 
+      {/* Header */}
       <header className="header">
-        {/* Gauche */}
         <span className="header-logo">Dashboard</span>
 
-        {/* Droite desktop uniquement */}
         <div className="header-right">
           <button className="btn-create-post" onClick={() => setShowModal(true)}>
             + Créer un post
@@ -54,7 +66,6 @@ export default function Dashboard({ user, onLogout }) {
           </button>
         </div>
 
-        {/* Droite mobile uniquement */}
         <div className="header-mobile">
           <div className="avatar">{initial}</div>
           <button className="burger-btn" onClick={() => setMenuOpen(!menuOpen)}>
@@ -65,7 +76,7 @@ export default function Dashboard({ user, onLogout }) {
         </div>
       </header>
 
-      {/* Menu burger — mobile uniquement */}
+      {/* Menu burger mobile */}
       {menuOpen && (
         <div className="burger-menu">
           <div className="burger-user-info">
@@ -82,17 +93,52 @@ export default function Dashboard({ user, onLogout }) {
         </div>
       )}
 
+      {/* Barre de recherche */}
+      <div className="search-bar">
+        <div className="search-input-wrap">
+          <FiSearch className="search-icon" />
+          <input
+            type="text"
+            placeholder="Rechercher par titre, contenu ou auteur..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          {search && (
+            <button className="search-clear" onClick={() => setSearch('')}>
+              <FiX size={14} />
+            </button>
+          )}
+        </div>
+        <span className="search-count">
+          {filteredPosts.length} post{filteredPosts.length !== 1 ? 's' : ''}
+        </span>
+      </div>
+
       {/* Posts */}
       {loading ? (
         <div className="empty-state"><p>Chargement...</p></div>
-      ) : posts.length === 0 ? (
+      ) : filteredPosts.length === 0 ? (
         <div className="empty-state">
-          <p>Aucun post pour le moment.</p>
-          <p>Sois le premier à publier !</p>
+          {search ? (
+            <>
+              <p style={{ fontSize: '24px' }}></p>
+              <p>Aucun post trouvé pour <strong>"{search}"</strong></p>
+              <button
+                onClick={() => setSearch('')}
+                style={{ marginTop: '12px', padding: '8px 16px', background: '#534AB7', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '13px' }}>
+                Effacer la recherche
+              </button>
+            </>
+          ) : (
+            <>
+              <p>Aucun post pour le moment.</p>
+              <p>Sois le premier à publier !</p>
+            </>
+          )}
         </div>
       ) : (
         <div className="posts-grid">
-          {posts.map(post => (
+          {filteredPosts.map(post => (
             <PostCard key={post._id} post={post} currentUser={user} />
           ))}
         </div>
