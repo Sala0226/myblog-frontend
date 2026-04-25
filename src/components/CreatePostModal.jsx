@@ -3,9 +3,9 @@ import * as postService from '../services/post.service';
 import '../styles/post.css';
 
 export default function CreatePostModal({ onClose, onPostCreated }) {
-  const [form, setForm]     = useState({ title: '', content: '' });
+  const [form, setForm]       = useState({ title: '', content: '' });
   const [loading, setLoading] = useState(false);
-  const [error, setError]   = useState('');
+  const [error, setError]     = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,19 +35,10 @@ export default function CreatePostModal({ onClose, onPostCreated }) {
         )}
 
         <form onSubmit={handleSubmit}>
-          <input
-            className="modal-input"
-            type="text"
-            placeholder="Titre"
-            value={form.title}
-            onChange={e => setForm({ ...form, title: e.target.value })}
-          />
-          <textarea
-            className="modal-textarea"
-            placeholder="Contenu..."
-            value={form.content}
-            onChange={e => setForm({ ...form, content: e.target.value })}
-          />
+          <input className="modal-input" type="text" placeholder="Titre"
+            value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
+          <textarea className="modal-textarea" placeholder="Contenu..."
+            value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} />
           <div className="modal-footer">
             <button type="button" className="btn-cancel" onClick={onClose}>Annuler</button>
             <button type="submit" className="btn-primary" disabled={loading}>
