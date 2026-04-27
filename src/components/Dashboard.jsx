@@ -5,6 +5,7 @@ import CreatePostModal from './CreatePostModal';
 import * as postService from '../services/post.service';
 import '../styles/dashboard.css';
 import '../styles/post.css';
+import ProfileAvatar from './ProfileAvatar';
 
 export default function Dashboard({ user, onLogout }) {
   const [posts, setPosts]         = useState([]);
@@ -14,6 +15,7 @@ export default function Dashboard({ user, onLogout }) {
   const [search, setSearch]       = useState('');
   const [page, setPage]           = useState(1);
   const [pagination, setPagination] = useState(null);
+  const [currentUser, setCurrentUser] = useState(user);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -69,7 +71,7 @@ export default function Dashboard({ user, onLogout }) {
             + Créer un post
           </button>
           <div className="user-info">
-            <div className="avatar">{initial}</div>
+            <ProfileAvatar user={currentUser} onUpdate={setCurrentUser} />
             <div>
               <p className="user-name">{user?.name}</p>
               <p className="user-email">{user?.email}</p>
@@ -81,7 +83,7 @@ export default function Dashboard({ user, onLogout }) {
         </div>
 
         <div className="header-mobile">
-          <div className="avatar">{initial}</div>
+          <ProfileAvatar user={currentUser} onUpdate={setCurrentUser} />
           <button className="burger-btn" onClick={() => setMenuOpen(!menuOpen)}>
             <span className="burger-line"></span>
             <span className="burger-line"></span>

@@ -6,7 +6,7 @@ import '../styles/post.css';
 // ← EN DEHORS de PostCard
 function CommentItem({ c, currentUser, postId, onUpdate, editingId, editingText, setEditingId, setEditingText }) {
   const commentInitial = c.user?.name?.charAt(0).toUpperCase() || '?';
-  const isOwner   = c.user?._id === currentUser?._id;
+  const isOwner = c.user?._id === currentUser?._id;
   const isEditing = editingId === c._id;
 
   const cancelEdit = () => {
@@ -75,12 +75,12 @@ function CommentItem({ c, currentUser, postId, onUpdate, editingId, editingText,
 }
 
 export default function PostCard({ post, currentUser }) {
-  const [likes, setLikes]       = useState(post.likes || []);
+  const [likes, setLikes] = useState(post.likes || []);
   const [comments, setComments] = useState(post.comments || []);
-  const [commentText, setCommentText]               = useState('');
-  const [showLikesModal, setShowLikesModal]         = useState(false);
-  const [showCommentsModal, setShowCommentsModal]   = useState(false);
-  const [editingId, setEditingId]     = useState(null);
+  const [commentText, setCommentText] = useState('');
+  const [showLikesModal, setShowLikesModal] = useState(false);
+  const [showCommentsModal, setShowCommentsModal] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState('');
 
   const isLiked = likes.some(l => (l._id || l) === currentUser?._id);
@@ -120,6 +120,10 @@ export default function PostCard({ post, currentUser }) {
 
         <p className="post-title">{post.title}</p>
         <p className="post-content">{post.content}</p>
+        {post.image && (
+          <img src={post.image} alt="post"
+            style={{ width: '100%', maxHeight: '220px', objectFit: 'cover', borderRadius: '8px' }} />
+        )}
 
         {(likes.length > 0 || comments.length > 0) && (
           <div className="post-summary">
