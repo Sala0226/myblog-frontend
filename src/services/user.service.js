@@ -10,3 +10,4 @@ API.interceptors.request.use((config) => {
 
 export const getProfile   = ()     => API.get('/profile');
 export const updateAvatar = (data) => API.put('/avatar', data);
+export const deleteAvatar = () => API.delete('/avatar');
