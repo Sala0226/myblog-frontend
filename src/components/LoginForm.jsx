@@ -2,7 +2,7 @@ import { useState } from 'react';
 import * as authService from '../services/auth.service';
 import '../styles/auth.css';
 
-export default function LoginForm({ onLoginSuccess, onGoRegister }) {
+export default function LoginForm({ onLoginSuccess, onGoRegister, onForgot }) {
   const [data, setData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
@@ -45,9 +45,16 @@ export default function LoginForm({ onLoginSuccess, onGoRegister }) {
         </form>
 
         <div className="link">
-          Pas de compte ? <span onClick={onGoRegister}>S'inscrire</span>
+          Pas de compte ? <span onClick={onGoRegister}>S'inscrire </span>
         </div>
+               <div style={{ textAlign: 'center', marginTop: '10px' }}>
+  <span onClick={onForgot}
+    style={{ fontSize: '13px', color: '#534AB7', cursor: 'pointer', fontWeight: 500 }}>
+    Mot de passe oublié ?
+  </span>
+</div>
       </div>
     </div>
+    
   );
 }

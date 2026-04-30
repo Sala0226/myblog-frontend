@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { FiEdit2, FiCheck, FiX, FiTrash2, FiMoreVertical, FiImage } from 'react-icons/fi';
 import * as postService from '../services/post.service';
 import '../styles/post.css';
@@ -118,6 +118,12 @@ export default function PostCard({ post, currentUser, onDelete, onUpdate }) {
     setSaving(false);
   };
 
+  useEffect(() => {
+  const handleClickOutside = () => setShowMenu(false);
+  if (showMenu) document.addEventListener('click', handleClickOutside);
+  return () => document.removeEventListener('click', handleClickOutside);
+}, [showMenu]);
+
   return (
     <>
       <div className="post-card">
@@ -137,10 +143,10 @@ export default function PostCard({ post, currentUser, onDelete, onUpdate }) {
           {/* Menu 3 points — visible uniquement pour l'auteur */}
           {isAuthor && (
             <div style={{ position: 'relative' }}>
-              <button onClick={() => setShowMenu(!showMenu)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: '4px', borderRadius: '6px' }}>
-                <FiMoreVertical size={16} />
-              </button>
+             <button onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
+  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: '4px', borderRadius: '6px' }}>
+  <FiMoreVertical size={16} />
+</button>
               {showMenu && (
                 <div style={{ position: 'absolute', right: 0, top: '28px', background: 'white', border: '1px solid #eee', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 10, minWidth: '140px' }}>
                   <button onClick={() => { setShowEditModal(true); setShowMenu(false); }}

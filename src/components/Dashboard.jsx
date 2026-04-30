@@ -6,6 +6,7 @@ import ProfileAvatar from './ProfileAvatar';
 import * as postService from '../services/post.service';
 import '../styles/dashboard.css';
 import '../styles/post.css';
+import logo from '../assets/logo-blog.png';
 
 export default function Dashboard({ user, onLogout }) {
   const [posts, setPosts]           = useState([]);
@@ -69,7 +70,8 @@ export default function Dashboard({ user, onLogout }) {
     <div style={{ minHeight: '100vh', background: '#f8f8f8' }}>
 
       <header className="header">
-        <span className="header-logo">Dashboard</span>
+    <img src={logo} alt="MyBlog Logo" style={{ width: '350px', marginBottom: '10px' , marginTop: '10px' }} />
+
 
         {/* Desktop */}
         <div className="header-right">

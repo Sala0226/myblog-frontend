@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { FiCamera, FiTrash2 } from 'react-icons/fi';
 import * as userService from '../services/user.service';
 
@@ -39,11 +39,17 @@ export default function ProfileAvatar({ user, onUpdate }) {
     finally { setLoading(false); }
   };
 
+  useEffect(() => {
+  const handleClickOutside = () => setShowMenu(false);
+  if (showMenu) document.addEventListener('click', handleClickOutside);
+  return () => document.removeEventListener('click', handleClickOutside);
+}, [showMenu]);
+
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
 
       {/* Avatar */}
-      <div onClick={() => setShowMenu(!showMenu)} style={{ cursor: 'pointer' }}>
+      <div onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }} style={{ cursor: 'pointer' }}>
         {user?.avatar ? (
           <img src={user.avatar} alt="avatar"
             style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }} />
