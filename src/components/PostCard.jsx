@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { FiEdit2, FiCheck, FiX, FiTrash2, FiMoreVertical, FiImage } from 'react-icons/fi';
 import * as postService from '../services/post.service';
 import '../styles/post.css';
+import ConfirmModal from './ConfirmModal';
 
 function CommentItem({ c, currentUser, postId, onUpdate, editingId, editingText, setEditingId, setEditingText }) {
   const commentInitial = c.user?.name?.charAt(0).toUpperCase() || '?';
@@ -71,6 +72,9 @@ export default function PostCard({ post, currentUser, onDelete, onUpdate }) {
   const [saving, setSaving] = useState(false);
   const fileRef = useRef();
 
+  const [confirmModal, setConfirmModal] = useState(null);
+
+
   const isLiked = likes.some(l => (l._id || l) === currentUser?._id);
   const isAuthor = post.author?._id === currentUser?._id;
   const initial = post.author?.name?.charAt(0).toUpperCase() || '?';
@@ -93,16 +97,20 @@ export default function PostCard({ post, currentUser, onDelete, onUpdate }) {
     } catch (err) { console.error(err); }
   };
 
-  const handleDelete = async () => {
-    if (!confirm('Supprimer ce post ?')) return;
-    setDeleting(true);
-    try {
-      await postService.deletePost(post._id);
-      onDelete(post._id);
-    } catch (err) { console.error(err); }
-    setDeleting(false);
-  };
-
+  const handleDelete = () => {
+  setConfirmModal({
+    message: 'Supprimer ce post définitivement ?',
+    onConfirm: async () => {
+      setDeleting(true);
+      try {
+        await postService.deletePost(post._id);
+        onDelete(post._id);
+      } catch (err) { console.error(err); }
+      setDeleting(false);
+      setConfirmModal(null);
+    }
+  });
+};
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -303,6 +311,14 @@ export default function PostCard({ post, currentUser, onDelete, onUpdate }) {
           </div>
         </div>
       )}
+
+      {confirmModal && (
+  <ConfirmModal
+    message={confirmModal.message}
+    onConfirm={confirmModal.onConfirm}
+    onCancel={() => setConfirmModal(null)}
+  />
+)}
     </>
   );
 }

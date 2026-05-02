@@ -6,6 +6,7 @@ import {
 } from 'react-icons/fi';
 import * as adminService from '../../services/admin.service';
 import '../../styles/admin.css';
+import ConfirmModal from '../ConfirmModal';
 
 // ── Sidebar ──────────────────────────────────────────────
 function Sidebar({ tab, setTab, onBack }) {
@@ -118,6 +119,8 @@ function UsersSection() {
   const [search, setSearch]         = useState('');
   const [loading, setLoading]       = useState(true);
 
+  const [confirmModal, setConfirmModal] = useState(null);
+
   const fetchData = (p = 1, q = search) => {
     setLoading(true);
     adminService.getUsers(p, q)
@@ -131,12 +134,16 @@ function UsersSection() {
     return () => clearTimeout(t);
   }, [search]);
 
-  const handleDelete = async (userId) => {
-    if (!confirm('Supprimer cet utilisateur et tous ses posts ?')) return;
-    await adminService.deleteUser(userId);
-    setUsers(prev => prev.filter(u => u._id !== userId));
-  };
-
+  const handleDelete = (userId) => {
+  setConfirmModal({
+    message: 'Supprimer cet utilisateur et tous ses posts ?',
+    onConfirm: async () => {
+      await adminService.deleteUser(userId);
+      setUsers(prev => prev.filter(u => u._id !== userId));
+      setConfirmModal(null);
+    }
+  });
+};
   return (
     <>
       <div className="admin-header">
@@ -244,6 +251,14 @@ function UsersSection() {
           </div>
         )}
       </div>
+      
+      {confirmModal && (
+  <ConfirmModal
+    message={confirmModal.message}
+    onConfirm={confirmModal.onConfirm}
+    onCancel={() => setConfirmModal(null)}
+  />
+)}
     </>
   );
 }
@@ -255,6 +270,8 @@ function PostsSection() {
   const [page, setPage]             = useState(1);
   const [search, setSearch]         = useState('');
   const [loading, setLoading]       = useState(true);
+
+  const [confirmModal, setConfirmModal] = useState(null);
 
   const fetchData = (p = 1, q = search) => {
     setLoading(true);
@@ -269,11 +286,16 @@ function PostsSection() {
     return () => clearTimeout(t);
   }, [search]);
 
-  const handleDelete = async (postId) => {
-    if (!confirm('Supprimer ce post ?')) return;
-    await adminService.deletePost(postId);
-    setPosts(prev => prev.filter(p => p._id !== postId));
-  };
+  const handleDelete = (postId) => {
+  setConfirmModal({
+    message: 'Supprimer ce post définitivement ?',
+    onConfirm: async () => {
+      await adminService.deletePost(postId);
+      setPosts(prev => prev.filter(p => p._id !== postId));
+      setConfirmModal(null);
+    }
+  });
+};
 
   return (
     <>
@@ -413,6 +435,14 @@ function PostsSection() {
           </div>
         )}
       </div>
+
+{confirmModal && (
+  <ConfirmModal
+    message={confirmModal.message}
+    onConfirm={confirmModal.onConfirm}
+    onCancel={() => setConfirmModal(null)}
+  />
+)}
     </>
   );
 }
