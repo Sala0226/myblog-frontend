@@ -5,11 +5,14 @@ import Dashboard      from './components/Dashboard';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword  from './components/ResetPassword';
 import AdminDashboard from './components/admin/AdminDashboard';
+import SplashScreen   from './components/SplashScreen';
 
 const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@gmail.com';
 
 export default function App() {
+  // 1. Initialisation des états
   const savedUser = JSON.parse(localStorage.getItem('user'));
+  const [showSplash, setShowSplash] = useState(true);
 
   const getInitialPage = () => {
     const path = window.location.pathname;
@@ -33,7 +36,7 @@ export default function App() {
 
   const isAdmin = user?.email === ADMIN_EMAIL;
 
-  // ← useEffect TOUJOURS avant les return conditionnels
+  // 2. Gestion des effets (History API)
   useEffect(() => {
     if (page === 'dashboard') {
       window.history.pushState(null, '', '/');
@@ -45,6 +48,7 @@ export default function App() {
     }
   }, [page]);
 
+  // 3. Fonctions de navigation
   const handleLoginSuccess = (userData) => {
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
@@ -65,11 +69,19 @@ export default function App() {
     window.history.pushState({}, '', '/');
   };
 
-  // ← Tous les return conditionnels APRÈS les hooks
+  // 4. RENDU CONDITIONNEL (Toujours après les hooks)
+  
+  // Affiche le Splash Screen en priorité s'il est actif
+  if (showSplash) {
+    return <SplashScreen onDone={() => setShowSplash(false)} />;
+  }
+
+  // Dashboard Admin
   if (showAdmin && isAdmin) {
     return <AdminDashboard onBack={() => setShowAdmin(false)} />;
   }
 
+  // Dashboard Utilisateur
   if (page === 'dashboard') {
     return (
       <Dashboard
@@ -80,6 +92,7 @@ export default function App() {
     );
   }
 
+  // Pages d'authentification
   if (page === 'reset')  return <ResetPassword token={resetToken} onGoLogin={goLogin} />;
   if (page === 'forgot') return <ForgotPassword onGoLogin={goLogin} />;
   if (page === 'login')  return (
