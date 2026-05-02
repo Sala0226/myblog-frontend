@@ -1,0 +1,229 @@
+.profile-page {
+  min-height: 100vh;
+  background: #f8f8f8;
+}
+
+
+.profile-cover {
+  height: 160px;
+  background: linear-gradient(135deg, #534AB7 0%, #7F77DD 100%);
+  position: relative;
+}
+
+
+.profile-card {
+  background: white;
+  border-bottom: 1px solid #eee;
+  padding: 0 1.5rem 1.25rem;
+  position: relative;
+}
+
+.profile-avatar-wrap {
+  position: absolute;
+  top: -52px;
+  left: 1.5rem;
+}
+
+.profile-avatar-img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.profile-avatar-initial {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #534AB7;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 600;
+  border: 4px solid white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.profile-info {
+  padding-top: 52px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.profile-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.profile-email {
+  font-size: 14px;
+  color: #888;
+  margin: 4px 0 0;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 24px;
+  margin-top: 12px;
+}
+
+.profile-stat {
+  text-align: center;
+}
+
+.profile-stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #534AB7;
+  display: block;
+}
+
+.profile-stat-label {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Tabs */
+.profile-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #eee;
+  background: white;
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.profile-tab {
+  padding: 14px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.profile-tab.active {
+  color: #534AB7;
+  border-bottom-color: #534AB7;
+}
+
+
+.profile-content .posts-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  padding: 0;
+  align-items: stretch;
+}
+
+/* Cards même hauteur */
+.profile-content .posts-grid > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-content .post-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Paramètres */
+.settings-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.settings-card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 1rem;
+}
+
+.settings-input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+  outline: none;
+  font-family: inherit;
+}
+
+.settings-input:focus { border-color: #534AB7; }
+
+.settings-btn {
+  padding: 9px 20px;
+  background: #534AB7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.settings-btn:hover { background: #3C3489; }
+.settings-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Post visibility toggle */
+.visibility-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+}
+
+.visibility-badge.public {
+  background: #EAF3DE;
+  color: #3B6D11;
+}
+
+.visibility-badge.private {
+  background: #f5f5f5;
+  color: #888;
+}
+
+@media (min-width: 768px) {
+  .profile-content .posts-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+@media (max-width: 600px) {
+  .profile-cover { height: 120px; }
+  .profile-avatar-wrap { top: -44px; left: 1rem; }
+  .profile-card { padding: 0 1rem 1rem; }
+  .profile-info { padding-top: 50px; }
+  .profile-tabs { padding: 0 0.75rem; overflow-x: auto; }
+  .profile-tab { padding: 12px 12px; font-size: 13px; white-space: nowrap; }
+  .profile-content { padding: 1rem; }
+  .profile-name { font-size: 18px; }
+  .profile-stats { gap: 16px; }
+}

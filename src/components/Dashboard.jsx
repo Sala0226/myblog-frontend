@@ -7,8 +7,9 @@ import * as postService from '../services/post.service';
 import '../styles/dashboard.css';
 import '../styles/post.css';
 import logo from '../assets/logo-blog.png';
+import UserProfile from './UserProfile';
 
-export default function Dashboard({ user, onLogout }) {
+export default function Dashboard({ user, onLogout, onAdmin }) {
   const [posts, setPosts]           = useState([]);
   const [showModal, setShowModal]   = useState(false);
   const [loading, setLoading]       = useState(true);
@@ -17,6 +18,7 @@ export default function Dashboard({ user, onLogout }) {
   const [page, setPage]             = useState(1);
   const [pagination, setPagination] = useState(null);
   const [currentUser, setCurrentUser] = useState(user);
+  const [showProfile, setShowProfile] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -66,56 +68,106 @@ export default function Dashboard({ user, onLogout }) {
     ? Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
     : [];
 
+    if (showProfile) return (
+  <UserProfile
+    currentUser={currentUser}
+    onUpdate={handleAvatarUpdate}
+    onBack={() => setShowProfile(false)}
+  />
+);
+
   return (
     <div style={{ minHeight: '100vh', background: '#f8f8f8' }}>
 
-      <header className="header">
-    <img src={logo} alt="MyBlog Logo" style={{ width: '350px', marginBottom: '10px' , marginTop: '10px' }} />
+     <header className="header">
+  {/* Logo */}
+  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+    <img src="/logo.png" alt="MyBlog"
+      style={{ height: '40px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
+    <div style={{ minWidth: 0 }}>
+      <p style={{ margin: 0, fontSize: '18px', fontWeight: '900', color: '#534AB7', lineHeight: 1.2, whiteSpace: 'nowrap' }}>
+        <span style={{ color: 'black' }}>My</span>Blog
+      </p>
+      <p className="header-subtitle" style={{ margin: 0, fontSize: '10px', color: '#666', letterSpacing: '0.3px', fontStyle: 'italic', whiteSpace: 'nowrap' }}>
+        Partagez vos idées, inspirez le monde
+      </p>
+    </div>
+  </div>
 
+  {/* Desktop */}
+  <div className="header-right">
+    {onAdmin && (
+      <button onClick={onAdmin}
+        style={{ padding: '8px 14px', background: '#d9d9df',  color: '#534AB7', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 500, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+         Admin
+      </button>
+    )}
+    <button className="btn-create-post" onClick={() => setShowModal(true)}>
+      + Créer un post
+    </button>
+    <div className="user-info" onClick={() => setShowProfile(true)} style={{ cursor: 'pointer' }}>
+      <ProfileAvatar user={currentUser} onUpdate={handleAvatarUpdate} />
+      <div>
+        <p className="user-name">{currentUser?.name}</p>
+        <p className="user-email">{currentUser?.email}</p>
+      </div>
+    </div>
+    <button className="btn-logout" onClick={handleLogout}>
+      Se déconnecter
+    </button>
+  </div>
 
-        {/* Desktop */}
-        <div className="header-right">
-          <button className="btn-create-post" onClick={() => setShowModal(true)}>
-            + Créer un post
-          </button>
-          <div className="user-info">
-            <ProfileAvatar user={currentUser} onUpdate={handleAvatarUpdate} />
-            <div>
-              <p className="user-name">{currentUser?.name}</p>
-              <p className="user-email">{currentUser?.email}</p>
-            </div>
-          </div>
-          <button className="btn-logout" onClick={handleLogout}>
-            Se déconnecter
-          </button>
-        </div>
+ {/* Mobile */}
+<div className="header-mobile">
+  <ProfileAvatar user={currentUser} onUpdate={handleAvatarUpdate} />
+  
+  {/* Nom cliquable → profil */}
+  <span onClick={() => setShowProfile(true)}
+    style={{ fontSize: '13px', fontWeight: 500, color: '#1a1a1a', cursor: 'pointer' }}>
+    {currentUser?.name}
+  </span>
 
-        {/* Mobile */}
-        <div className="header-mobile">
-          <ProfileAvatar user={currentUser} onUpdate={handleAvatarUpdate} />
-          <button className="burger-btn" onClick={() => setMenuOpen(!menuOpen)}>
-            <span className="burger-line"></span>
-            <span className="burger-line"></span>
-            <span className="burger-line"></span>
-          </button>
-        </div>
-      </header>
+  <button className="burger-btn" onClick={(e) => { e.stopPropagation(); setMenuOpen(!menuOpen); }}>
+    <span className="burger-line"></span>
+    <span className="burger-line"></span>
+    <span className="burger-line"></span>
+  </button>
+</div>
+</header>
+      
 
-      {menuOpen && (
-        <div className="burger-menu">
-          <div className="burger-user-info">
-            <p className="user-name">{currentUser?.name}</p>
-            <p className="user-email">{currentUser?.email}</p>
-          </div>
-          <hr style={{ border: 'none', borderTop: '1px solid #f0f0f0', margin: '8px 0' }} />
-          <button className="burger-item" onClick={() => { setShowModal(true); setMenuOpen(false); }}>
-            + Créer un post
-          </button>
-          <button className="burger-item logout" onClick={handleLogout}>
-            Se déconnecter
-          </button>
-        </div>
-      )}
+{menuOpen && (
+  <div className="burger-menu">
+    <div className="burger-user-info" 
+      onClick={() => { setShowProfile(true); setMenuOpen(false); }}
+      style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <ProfileAvatar user={currentUser} onUpdate={handleAvatarUpdate} />
+      <div>
+        <p className="user-name">{currentUser?.name}</p>
+        <p className="user-email">{currentUser?.email}</p>
+      </div>
+    </div>
+    <hr style={{ border: 'none', borderTop: '1px solid #f0f0f0', margin: '8px 0' }} />
+    {onAdmin && (
+      <button className="burger-item"
+        onClick={() => { onAdmin(); setMenuOpen(false); }}
+        style={{ background: '#1a1a2e', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        Back office Admin
+      </button>
+    )}
+    <button className="burger-item" onClick={() => { setShowModal(true); setMenuOpen(false); }}>
+      + Créer un post
+    </button>
+    <button className="burger-item" 
+      onClick={() => { setShowProfile(true); setMenuOpen(false); }}
+      style={{ background: '#f5f5f5', color: '#534AB7', border: '1px solid #534AB7' }}>
+       Mon profil
+    </button>
+    <button className="burger-item logout" onClick={handleLogout}>
+      Se déconnecter
+    </button>
+  </div>
+)}
 
       <div className="search-bar">
         <div className="search-input-wrap">

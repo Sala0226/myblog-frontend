@@ -22,3 +22,5 @@ export const deletePost = (id) => API.delete(`/posts/${id}`);
 export const likePost    = (id)         => API.post(`/posts/${id}/like`);
 export const commentPost = (id, data)   => API.post(`/posts/${id}/comment`, data);
 export const updateComment = (postId, commentId, data) => API.put(`/posts/${postId}/comment/${commentId}`, data);
+export const getPostsByUser    = (userId) => API.get(`/posts/user/${userId}`);
+export const toggleVisibility  = (id)     => API.put(`/posts/${id}/visibility`);

@@ -9,5 +9,7 @@ API.interceptors.request.use((config) => {
 });
 
 export const getProfile   = ()     => API.get('/profile');
+export const getPublicProfile = (userId)        => API.get(`/profile/${userId}`);
 export const updateAvatar = (data) => API.put('/avatar', data);
 export const deleteAvatar = () => API.delete('/avatar');
+export const updatePassword   = (data)          => API.put('/update-password', data);
