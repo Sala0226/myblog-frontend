@@ -53,8 +53,12 @@ export default function Dashboard({ user, onLogout, onAdmin }) {
   };
 
   const handleUpdatePost = (updatedPost) => {
+  if (updatedPost.isPublic === false && updatedPost.author?._id !== currentUser?._id) {
+    setPosts(prev => prev.filter(p => p._id !== updatedPost._id));
+  } else {
     setPosts(prev => prev.map(p => p._id === updatedPost._id ? updatedPost : p));
-  };
+  }
+};
 
   // ← sync avatar ET recharge les posts
   const handleAvatarUpdate = (updatedUser) => {
@@ -72,7 +76,11 @@ export default function Dashboard({ user, onLogout, onAdmin }) {
   <UserProfile
     currentUser={currentUser}
     onUpdate={handleAvatarUpdate}
-    onBack={() => setShowProfile(false)}
+        onBack={() => {
+      setShowProfile(false);
+      fetchPosts(1); // 
+    }}
+
   />
 );
 

@@ -45,13 +45,13 @@ const handlePostCreated = (newPost) => {
   };
 
   const handleToggleVisibility = async (postId, currentStatus) => {
-    try {
-      await postService.toggleVisibility(postId);
-      setPosts(prev => prev.map(p =>
-        p._id === postId ? { ...p, isPublic: !p.isPublic } : p
-      ));
-    } catch (err) { console.error(err); }
-  };
+  try {
+    const res = await postService.toggleVisibility(postId);
+    setPosts(prev => prev.map(p =>
+      p._id === postId ? { ...p, isPublic: res.data.isPublic } : p
+    ));
+  } catch (err) { console.error(err); }
+};
 
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
